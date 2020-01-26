@@ -1,5 +1,6 @@
 package com.validation.lib.validation;
 
+import com.google.common.base.Suppliers;
 import com.validation.lib.extractor.PropertyNameExtractor;
 
 import java.util.ArrayList;
@@ -7,15 +8,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ValidationBuilder<T> {
 
-    private final PropertyNameExtractor<T> propertyNameExtractor;
+    private final Supplier<PropertyNameExtractor<T>> propertyNameExtractorSupplier;
     private final List<Validation<T>> validations = new ArrayList<>();
 
     private ValidationBuilder(Class<T> clazz) {
-        propertyNameExtractor = new PropertyNameExtractor<>(clazz);
+        propertyNameExtractorSupplier = Suppliers.memoize(() -> new PropertyNameExtractor<>(clazz));
     }
 
     public static <T> ValidationBuilder<T> forClass(Class<T> clazz) {
@@ -27,7 +29,7 @@ public class ValidationBuilder<T> {
     }
 
     public <F> FieldValidationBuilder<F> ruleFor(Function<T, F> fieldGetter) {
-        return new FieldValidationBuilder<>(fieldGetter, propertyNameExtractor.getPropertyName(fieldGetter));
+        return new FieldValidationBuilder<>(fieldGetter, propertyNameExtractorSupplier.get().getPropertyName(fieldGetter));
     }
 
     @SafeVarargs

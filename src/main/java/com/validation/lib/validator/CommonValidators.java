@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.lang.String.valueOf;
-import static java.util.Optional.*;
 
 public class CommonValidators {
 
@@ -25,15 +24,20 @@ public class CommonValidators {
     }
 
     public static Function<Long, Optional<ErrorMessage>> between(long min, long max) {
-        return value -> value < min || value > max
-            ? of(new ErrorMessage(ErrorKeys.NOT_IN_RANGE, ImmutableMap.of("min", valueOf(min), "max", valueOf(max))))
-            : empty();
+        return condition(
+            value -> value >= min && value <= max,
+            new ErrorMessage(ErrorKeys.NOT_IN_RANGE, ImmutableMap.of("min", valueOf(min), "max", valueOf(max)))
+        );
     }
 
     public static <T> Function<T, Optional<ErrorMessage>> condition(Function<T, Boolean> condition, String errorKey) {
-        return value -> !condition.apply(value)
-            ? of(new ErrorMessage(errorKey))
-            : empty();
+        return condition(condition, new ErrorMessage(errorKey));
+    }
+
+    public static <T> Function<T, Optional<ErrorMessage>> condition(
+        Function<T, Boolean> condition, ErrorMessage errorMessage) {
+
+        return value -> !condition.apply(value) ? Optional.of(errorMessage) : Optional.empty();
     }
 
     private CommonValidators() { }

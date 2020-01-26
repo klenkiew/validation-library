@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,15 +51,6 @@ public class ValidationBuilder<T> {
         public FieldValidationBuilder(Function<T, F> fieldGetter, String fieldName) {
             this.fieldGetter = fieldGetter;
             this.fieldName = fieldName;
-        }
-
-        @SafeVarargs
-        public final FieldValidationBuilder<F> require(BiFunction<F, String, Optional<ErrorDescription>>... conditions) {
-            List<Validation<T>> validations = Arrays.stream(conditions)
-                .map(condition -> (Validation<T>) object -> condition.apply(fieldGetter.apply(object), fieldName))
-                .collect(Collectors.toList());
-            ValidationBuilder.this.validations.addAll(validations);
-            return this;
         }
 
         @SafeVarargs

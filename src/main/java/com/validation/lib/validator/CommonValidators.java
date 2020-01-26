@@ -23,6 +23,10 @@ public class CommonValidators {
         return condition(value -> value%2 == 0, ErrorKeys.NOT_EVEN);
     }
 
+    public static Function<Long, Optional<ErrorMessage>> odd() {
+        return condition(value -> value%2 != 0, ErrorKeys.NOT_ODD);
+    }
+
     public static Function<Long, Optional<ErrorMessage>> between(long min, long max) {
         return condition(
             value -> value >= min && value <= max,

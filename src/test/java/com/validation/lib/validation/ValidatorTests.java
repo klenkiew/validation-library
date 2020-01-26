@@ -35,7 +35,7 @@ public class ValidatorTests {
         EmployeeValidator validator = new EmployeeValidator();
         assertInvalid(employee, validator, (errorDescription -> {
             assertThat(errorDescription.getField()).isEqualTo("wage");
-            assertThat(errorDescription.getErrorMessage().getErrorKey()).isEqualTo(ErrorKeys.VALUE_REQUIRED);
+            assertThat(errorDescription.getErrorMessage().getErrorKey()).isEqualTo(ErrorKeys.NOT_IN_RANGE);
             assertThat(errorDescription.getErrorMessage().getParameters().get("min")).isEqualTo("6");
             assertThat(errorDescription.getErrorMessage().getParameters().get("max")).isEqualTo("12");
         }));
